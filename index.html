@@ -1,0 +1,1284 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0B0F19" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Routine OS" />
+  <title>Routine OS</title>
+  <style>
+    :root {
+      --bg: #071018;
+      --bg2: #0b1320;
+      --card: rgba(11, 19, 32, 0.82);
+      --card-2: rgba(17, 24, 39, 0.85);
+      --line: rgba(255,255,255,0.08);
+      --text: #ecfdf5;
+      --muted: #94a3b8;
+      --green: #39ff88;
+      --green-2: #0bd96f;
+      --orange: #ff8a00;
+      --orange-2: #ffb347;
+      --red: #ff5470;
+      --yellow: #facc15;
+      --cyan: #22d3ee;
+      --shadow: 0 20px 80px rgba(0,0,0,.45);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; min-height: 100%; }
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(57,255,136,0.16), transparent 24%),
+        radial-gradient(circle at 85% 12%, rgba(255,138,0,0.14), transparent 28%),
+        radial-gradient(circle at 70% 85%, rgba(34,211,238,0.10), transparent 24%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      color: var(--text);
+      padding: env(safe-area-inset-top) 16px calc(24px + env(safe-area-inset-bottom));
+      overflow-x: hidden;
+    }
+
+    .bg-grid::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size: 24px 24px;
+      mask-image: radial-gradient(circle at center, black 35%, transparent 95%);
+      opacity: .32;
+    }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(57,255,136,.18);
+      background: linear-gradient(135deg, rgba(12,18,34,.92), rgba(10,15,27,.85));
+      box-shadow: var(--shadow);
+      border-radius: 30px;
+      padding: 24px;
+      margin-top: 12px;
+      margin-bottom: 18px;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: -40% auto auto -10%;
+      width: 220px;
+      height: 220px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(57,255,136,.28), transparent 65%);
+      filter: blur(6px);
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      right: -10%;
+      top: -20%;
+      width: 240px;
+      height: 240px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(255,138,0,.22), transparent 65%);
+      filter: blur(8px);
+      animation: float 10s ease-in-out infinite reverse;
+    }
+
+    @keyframes float {
+      0%,100% { transform: translateY(0px) translateX(0px); }
+      50% { transform: translateY(18px) translateX(10px); }
+    }
+
+    h1,h2,h3,p { margin: 0; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      color: var(--green);
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      border: 1px solid rgba(255,255,255,.08);
+      margin-bottom: 12px;
+      backdrop-filter: blur(10px);
+    }
+
+    .hero h1 {
+      font-size: clamp(32px, 7vw, 54px);
+      line-height: .96;
+      margin-bottom: 10px;
+      letter-spacing: -0.04em;
+    }
+
+    .hero p {
+      color: #cbd5e1;
+      max-width: 720px;
+      line-height: 1.45;
+      font-size: 15px;
+    }
+
+    .stats-grid, .grid-2, .grid-3, .grid-4 {
+      display: grid;
+      gap: 14px;
+    }
+    .stats-grid { grid-template-columns: repeat(4, minmax(0,1fr)); margin: 16px 0 8px; }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0,1fr)); }
+
+    .card {
+      background: linear-gradient(180deg, var(--card), rgba(9,14,24,.88));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,.04), transparent 35%);
+      pointer-events: none;
+    }
+
+    .metric {
+      min-height: 118px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+
+    .metric:hover, .card:hover { transform: translateY(-2px); border-color: rgba(57,255,136,.25); }
+
+    .metric .label {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .metric .value {
+      font-size: clamp(26px, 5vw, 38px);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin-top: 10px;
+    }
+
+    .metric .sub {
+      color: #cbd5e1;
+      font-size: 13px;
+    }
+
+    .glow-green { box-shadow: inset 0 0 0 1px rgba(57,255,136,.16), 0 0 32px rgba(57,255,136,.08), var(--shadow); }
+    .glow-orange { box-shadow: inset 0 0 0 1px rgba(255,138,0,.16), 0 0 32px rgba(255,138,0,.08), var(--shadow); }
+
+    .section-title {
+      font-size: 18px;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .section-sub {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin: 18px 0 14px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      border-radius: 16px;
+      padding: 12px 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .18s ease;
+      min-height: 46px;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(57,255,136,.18), rgba(255,138,0,.12));
+      border-color: rgba(57,255,136,.28);
+      box-shadow: 0 0 0 1px rgba(57,255,136,.12), 0 0 24px rgba(57,255,136,.10);
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; animation: fadeUp .26s ease; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .field { margin-bottom: 16px; }
+    .field label {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      font-size: 14px;
+      margin-bottom: 8px;
+      color: #e2e8f0;
+    }
+
+    .field small { color: var(--muted); font-size: 12px; }
+
+    input[type="text"], textarea, input[type="number"] {
+      width: 100%;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      padding: 14px 14px;
+      outline: none;
+      transition: .18s ease;
+      font: inherit;
+      min-height: 52px;
+    }
+
+    textarea { min-height: 98px; resize: vertical; }
+
+    input:focus, textarea:focus {
+      border-color: rgba(57,255,136,.35);
+      box-shadow: 0 0 0 4px rgba(57,255,136,.08);
+      background: rgba(255,255,255,.06);
+    }
+
+    .slider-wrap {
+      background: rgba(255,255,255,.04);
+      border-radius: 18px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .slider-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .score-badge {
+      min-width: 54px;
+      text-align: center;
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-weight: 800;
+      color: #02140a;
+      background: linear-gradient(135deg, var(--green), #7dffb5);
+      box-shadow: 0 0 24px rgba(57,255,136,.28);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      appearance: none;
+      height: 12px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(255,138,0,.8), rgba(57,255,136,.95));
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #fff;
+      border: 3px solid var(--green);
+      box-shadow: 0 0 0 6px rgba(57,255,136,.16);
+      cursor: pointer;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .btn {
+      border: none;
+      cursor: pointer;
+      border-radius: 18px;
+      padding: 14px 18px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      min-height: 52px;
+      transition: transform .14s ease, box-shadow .14s ease, opacity .14s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(1px) scale(.99); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--green), var(--orange));
+      color: #08110d;
+      box-shadow: 0 12px 32px rgba(57,255,136,.2);
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,.10);
+    }
+
+    .pill-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .pill {
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.05);
+      color: #dbeafe;
+      border: 1px solid rgba(255,255,255,.08);
+      font-size: 12px;
+    }
+
+    .streak-bar {
+      height: 14px;
+      width: 100%;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.08);
+      margin-top: 10px;
+    }
+
+    .streak-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--orange), var(--green));
+      width: 0%;
+      transition: width .45s ease;
+      box-shadow: 0 0 24px rgba(57,255,136,.24);
+    }
+
+    .bars { display: grid; gap: 12px; }
+    .bar-row {
+      display: grid;
+      grid-template-columns: 140px 1fr 56px;
+      gap: 12px;
+      align-items: center;
+    }
+    .bar-label { font-size: 14px; color: #e2e8f0; }
+    .bar-track {
+      height: 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.07);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.07);
+    }
+    .bar-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--orange), var(--green));
+      transition: width .45s ease;
+    }
+    .bar-value { text-align: right; color: #dbeafe; font-weight: 700; }
+
+    .toggle-list { display: grid; gap: 12px; }
+    .toggle-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 12px;
+      align-items: center;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      padding: 12px 14px;
+      border-radius: 18px;
+    }
+
+    .switch {
+      position: relative;
+      width: 60px;
+      height: 34px;
+      display: inline-block;
+    }
+    .switch input { display: none; }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: #334155;
+      transition: .2s ease;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.08);
+    }
+    .slider:before {
+      content: "";
+      position: absolute;
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      top: 3px;
+      background: white;
+      transition: .2s ease;
+      border-radius: 50%;
+    }
+    .switch input:checked + .slider {
+      background: linear-gradient(135deg, var(--green-2), var(--green));
+      box-shadow: 0 0 24px rgba(57,255,136,.22);
+    }
+    .switch input:checked + .slider:before { transform: translateX(25px); }
+
+    .streak-chip {
+      min-width: 82px;
+      text-align: center;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.08);
+      color: #dbeafe;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 10px;
+      max-height: 440px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .entry {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .entry-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .entry-date { font-weight: 800; color: #f8fafc; }
+    .entry-kind {
+      font-size: 12px;
+      color: #02140a;
+      background: linear-gradient(135deg, var(--green), var(--orange));
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 800;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+    }
+
+    .mini {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 14px;
+      padding: 10px;
+    }
+
+    .mini .k { color: var(--muted); font-size: 12px; }
+    .mini .v { margin-top: 4px; font-weight: 700; }
+
+    .analysis-card {
+      border: 1px solid rgba(57,255,136,.18);
+      background: linear-gradient(180deg, rgba(8,18,23,.95), rgba(10,13,21,.88));
+    }
+
+    .analysis-list { display: grid; gap: 12px; }
+    .analysis-item {
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      line-height: 1.45;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(18px + env(safe-area-inset-bottom));
+      transform: translateX(-50%) translateY(20px);
+      background: linear-gradient(135deg, rgba(57,255,136,.95), rgba(255,138,0,.95));
+      color: #06110c;
+      padding: 14px 18px;
+      border-radius: 16px;
+      font-weight: 800;
+      opacity: 0;
+      pointer-events: none;
+      transition: .26s ease;
+      box-shadow: var(--shadow);
+      z-index: 30;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .confetti {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 20;
+    }
+    .confetti i {
+      position: absolute;
+      width: 10px;
+      height: 16px;
+      border-radius: 4px;
+      opacity: .9;
+      animation: fall 1.3s linear forwards;
+    }
+    @keyframes fall {
+      0% { transform: translateY(-40px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(120vh) rotate(540deg); opacity: 0; }
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+      margin: 18px 0 6px;
+    }
+
+    @media (max-width: 860px) {
+      .stats-grid, .grid-4 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .grid-3, .grid-2 { grid-template-columns: 1fr; }
+      .bar-row { grid-template-columns: 1fr; }
+      .mini-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 560px) {
+      body { padding-inline: 12px; }
+      .hero { padding: 18px; border-radius: 24px; }
+      .card { padding: 16px; border-radius: 22px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .toggle-row { grid-template-columns: 1fr auto; }
+      .streak-chip { grid-column: 1 / -1; justify-self: start; }
+    }
+  </style>
+</head>
+<body class="bg-grid">
+  <div class="container">
+    <section class="hero">
+      <div class="eyebrow">Routine OS • Performance Engine</div>
+      <h1>Baue Tage, die dich nach vorne schieben.</h1>
+      <p>Morgens klar rein. Abends hart auswerten. Die App sammelt dein Verhalten, erkennt Muster, baut Streaks auf und gibt dir Empfehlungen, die auf deinen echten Daten basieren.</p>
+      <div class="stats-grid">
+        <div class="card metric glow-green">
+          <div class="label">XP Level</div>
+          <div class="value" id="xpLevel">1</div>
+          <div class="sub" id="xpText">0 XP gesammelt</div>
+        </div>
+        <div class="card metric glow-orange">
+          <div class="label">Aktueller Streak</div>
+          <div class="value" id="dailyStreak">0</div>
+          <div class="sub">Tage mit Abend-Check-in</div>
+        </div>
+        <div class="card metric">
+          <div class="label">Commitment Rate</div>
+          <div class="value" id="commitmentRate">0%</div>
+          <div class="sub">Non-Negotiable durchgezogen</div>
+        </div>
+        <div class="card metric">
+          <div class="label">Performance Score</div>
+          <div class="value" id="perfScore">0.0</div>
+          <div class="sub">Ø deiner 5 Kernwerte</div>
+        </div>
+      </div>
+      <div class="streak-bar"><div class="streak-fill" id="xpFill"></div></div>
+    </section>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="dashboard">Übersicht</button>
+      <button class="tab-btn" data-tab="morning">Morgen</button>
+      <button class="tab-btn" data-tab="evening">Abend</button>
+      <button class="tab-btn" data-tab="analysis">Analyse</button>
+      <button class="tab-btn" data-tab="history">Verlauf</button>
+    </div>
+
+    <section class="tab-panel active" id="dashboard">
+      <div class="grid-2">
+        <div class="card">
+          <h2 class="section-title">Heute im Fokus</h2>
+          <p class="section-sub">Das hier muss heute klar sein. Kein Gedankenmüll, kein Rumlavieren.</p>
+          <div class="mini-grid">
+            <div class="mini"><div class="k">Haupt-Move</div><div class="v" id="dashMainMove">-</div></div>
+            <div class="mini"><div class="k">Non-Negotiable</div><div class="v" id="dashNN">-</div></div>
+            <div class="mini"><div class="k">Partnerprozess</div><div class="v" id="dashPartner">-</div></div>
+            <div class="mini"><div class="k">Sabotage-Risiko</div><div class="v" id="dashRisk">-</div></div>
+          </div>
+          <div class="pill-row" id="gratitudePills" style="margin-top:12px;"></div>
+        </div>
+        <div class="card">
+          <h2 class="section-title">Kernwerte</h2>
+          <p class="section-sub">Keine Wohlfühl-Kosmetik. Harte Sicht auf die Bereiche, die deine Performance treiben.</p>
+          <div class="bars" id="scoreBars"></div>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top:14px;">
+        <div class="card">
+          <h2 class="section-title">Habit Engine</h2>
+          <p class="section-sub">Die kleinen Dinge, die später über Stabilität entscheiden.</p>
+          <div class="bars" id="habitBars"></div>
+        </div>
+        <div class="card analysis-card">
+          <h2 class="section-title">Empfehlung heute</h2>
+          <p class="section-sub">Das System zieht Muster aus deinen letzten Einträgen und priorisiert den Hebel mit der größten Wirkung.</p>
+          <div class="analysis-list" id="topReco"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="morning">
+      <div class="card">
+        <h2 class="section-title">Morgen-Check-in</h2>
+        <p class="section-sub">Morgens setzt du Richtung. Kurz, klar, belastbar.</p>
+        <div class="field">
+          <label for="mainMove">Was ist heute dein Haupt-Move?</label>
+          <input id="mainMove" type="text" placeholder="Zum Beispiel: 2 qualifizierte Gespräche fixieren" />
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="nonNegotiable">Was ist dein Non-Negotiable heute?</label>
+            <input id="nonNegotiable" type="text" placeholder="Zum Beispiel: 60 Min. LinkedIn Outreach vor 11 Uhr" />
+          </div>
+          <div class="field">
+            <label for="partnerProcess">Welchen Partnerprozess bringst du heute voran?</label>
+            <input id="partnerProcess" type="text" placeholder="Person + nächster Schritt" />
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="startEnergy">Start-Energie <small>1 = leer, 10 = voller Zug</small></label>
+            <div class="slider-wrap">
+              <div class="slider-line"><span>Energie-Level</span><div class="score-badge" id="startEnergyVal">7</div></div>
+              <input id="startEnergy" type="range" min="1" max="10" value="7" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="sabotageRisk">Was könnte dich heute sabotieren?</label>
+            <input id="sabotageRisk" type="text" placeholder="Zum Beispiel: zu spätes Starten, Meetings ohne Ziel" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="gratitude1">Wofür bist du heute dankbar? <small>3 Dinge, kurz und konkret</small></label>
+          <div class="grid-3">
+            <input id="gratitude1" type="text" placeholder="1" />
+            <input id="gratitude2" type="text" placeholder="2" />
+            <input id="gratitude3" type="text" placeholder="3" />
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="saveMorning">Morgen speichern</button>
+          <button class="btn btn-secondary" id="loadToday">Heutige Daten laden</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="evening">
+      <div class="card">
+        <h2 class="section-title">Abend-Check-in</h2>
+        <p class="section-sub">Abends zählt Wahrheit. Kein Schönreden. Nur Input, aus dem gute Empfehlungen entstehen.</p>
+        <div class="grid-2">
+          <div class="field">
+            <label for="nnDone">Hast du dein Non-Negotiable erfüllt?</label>
+            <select id="nnDone" style="width:100%; border-radius:16px; border:1px solid rgba(255,255,255,.1); background:rgba(255,255,255,.04); color:var(--text); padding:14px; min-height:52px;">
+              <option value="yes">Ja</option>
+              <option value="no">Nein</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="mainLearning">Was war mein größtes Learning heute?</label>
+            <input id="mainLearning" type="text" placeholder="Kurz, konkret, umsetzbar" />
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label>Schlaf</label>
+            <div class="slider-wrap"><div class="slider-line"><span>Wie gut war dein Schlaf?</span><div class="score-badge" id="sleepVal">7</div></div><input id="sleep" type="range" min="1" max="10" value="7" /></div>
+          </div>
+          <div class="field">
+            <label>Bewegung</label>
+            <div class="slider-wrap"><div class="slider-line"><span>Wie stark war dein Körper heute im Spiel?</span><div class="score-badge" id="movementVal">7</div></div><input id="movement" type="range" min="1" max="10" value="7" /></div>
+          </div>
+          <div class="field">
+            <label>Produktivität</label>
+            <div class="slider-wrap"><div class="slider-line"><span>Wie wirksam war dein Output?</span><div class="score-badge" id="productivityVal">7</div></div><input id="productivity" type="range" min="1" max="10" value="7" /></div>
+          </div>
+          <div class="field">
+            <label>Energie</label>
+            <div class="slider-wrap"><div class="slider-line"><span>Wie stabil war deine Energie?</span><div class="score-badge" id="energyVal">7</div></div><input id="energy" type="range" min="1" max="10" value="7" /></div>
+          </div>
+          <div class="field">
+            <label>Wohlbefinden</label>
+            <div class="slider-wrap"><div class="slider-line"><span>Wie gut ging es dir insgesamt?</span><div class="score-badge" id="wellbeingVal">7</div></div><input id="wellbeing" type="range" min="1" max="10" value="7" /></div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label for="partnerProgress">Wie viele Partnerprozesse heute vorangebracht?</label>
+            <input id="partnerProgress" type="number" min="0" value="0" />
+          </div>
+          <div class="field">
+            <label for="newContacts">Wie viele Kontakte habe ich heute neu kennengelernt?</label>
+            <input id="newContacts" type="number" min="0" value="0" />
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label for="bestMove">Was war dein bester Move heute?</label>
+            <textarea id="bestMove" placeholder="Der Move, den du wiederholen solltest"></textarea>
+          </div>
+          <div class="field">
+            <label for="energyDrainer">Was war dein Energiefresser?</label>
+            <textarea id="energyDrainer" placeholder="Was hat Leistung oder Fokus gezogen?"></textarea>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Habit Tracker <small>abends umlegen, ohne Diskussion</small></label>
+          <div class="toggle-list">
+            <div class="toggle-row">
+              <div>
+                <div>Supplements genommen?</div>
+                <small>physische Basis</small>
+              </div>
+              <label class="switch"><input id="habitSupplements" type="checkbox"><span class="slider"></span></label>
+              <div class="streak-chip" id="streakSupplements">0 Tage</div>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <div>Meditiert?</div>
+                <small>mentale Stabilität</small>
+              </div>
+              <label class="switch"><input id="habitMeditation" type="checkbox"><span class="slider"></span></label>
+              <div class="streak-chip" id="streakMeditation">0 Tage</div>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <div>Controlling genutzt?</div>
+                <small>Zahlen statt Bauchgefühl</small>
+              </div>
+              <label class="switch"><input id="habitControlling" type="checkbox"><span class="slider"></span></label>
+              <div class="streak-chip" id="streakControlling">0 Tage</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" id="saveEvening">Abend speichern</button>
+          <button class="btn btn-secondary" id="exportData">Daten exportieren</button>
+          <button class="btn btn-secondary" id="importData">Daten importieren</button>
+          <input id="importFile" type="file" accept="application/json" style="display:none;" />
+        </div>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="analysis">
+      <div class="grid-2">
+        <div class="card analysis-card">
+          <h2 class="section-title">Datengestützte Empfehlungen</h2>
+          <p class="section-sub">Keine Motivationssprüche. Das System schaut auf Trends, Commitment, Gewohnheiten, Kontakte und deinen Freitext.</p>
+          <div class="analysis-list" id="analysisList"></div>
+        </div>
+        <div class="card">
+          <h2 class="section-title">Vertrieb & Execution</h2>
+          <p class="section-sub">Diese Metriken zeigen, ob du nur busy warst oder wirklich Momentum aufgebaut hast.</p>
+          <div class="mini-grid" id="salesStats"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="history">
+      <div class="card">
+        <h2 class="section-title">Verlauf</h2>
+        <p class="section-sub">Hier siehst du deine letzten Tage. Je ehrlicher die Daten, desto besser die Empfehlungen.</p>
+        <div class="btn-row" style="margin-bottom:12px;">
+          <button class="btn btn-secondary" id="clearData">Alle Daten löschen</button>
+        </div>
+        <div class="timeline" id="historyList"></div>
+      </div>
+    </section>
+
+    <div class="footer-note">Speicherung lokal im Browser. Für ein echtes Gerät-übergreifendes Backend wäre als nächster Schritt Firebase, Supabase oder ein kleiner API-Layer sinnvoll.</div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <div class="confetti" id="confetti"></div>
+
+  <script>
+    const STORAGE_KEY = 'routine_os_v3';
+    const dayKey = () => new Date().toISOString().slice(0,10);
+    const fmtDate = d => new Date(d + 'T12:00:00').toLocaleDateString('de-DE', { weekday: 'short', day:'2-digit', month:'2-digit' });
+
+    const defaults = { mornings: [], evenings: [] };
+    const loadData = () => {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaults; }
+      catch { return defaults; }
+    };
+    const saveData = (data) => localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+
+    const data = loadData();
+
+    const els = {
+      xpLevel: document.getElementById('xpLevel'), xpText: document.getElementById('xpText'), xpFill: document.getElementById('xpFill'),
+      dailyStreak: document.getElementById('dailyStreak'), commitmentRate: document.getElementById('commitmentRate'), perfScore: document.getElementById('perfScore'),
+      dashMainMove: document.getElementById('dashMainMove'), dashNN: document.getElementById('dashNN'), dashPartner: document.getElementById('dashPartner'), dashRisk: document.getElementById('dashRisk'),
+      gratitudePills: document.getElementById('gratitudePills'), scoreBars: document.getElementById('scoreBars'), habitBars: document.getElementById('habitBars'),
+      topReco: document.getElementById('topReco'), analysisList: document.getElementById('analysisList'), salesStats: document.getElementById('salesStats'), historyList: document.getElementById('historyList'),
+      toast: document.getElementById('toast'), confetti: document.getElementById('confetti')
+    };
+
+    const rangePairs = [
+      ['startEnergy','startEnergyVal'], ['sleep','sleepVal'], ['movement','movementVal'], ['productivity','productivityVal'], ['energy','energyVal'], ['wellbeing','wellbeingVal']
+    ];
+
+    rangePairs.forEach(([inputId, valId]) => {
+      const input = document.getElementById(inputId);
+      const val = document.getElementById(valId);
+      const sync = () => val.textContent = input.value;
+      input.addEventListener('input', sync); sync();
+    });
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    function showToast(msg) {
+      els.toast.textContent = msg;
+      els.toast.classList.add('show');
+      setTimeout(() => els.toast.classList.remove('show'), 2200);
+    }
+
+    function blastConfetti(count = 28) {
+      els.confetti.innerHTML = '';
+      const colors = ['#39ff88','#ff8a00','#22d3ee','#facc15','#ffffff'];
+      for (let i=0;i<count;i++) {
+        const piece = document.createElement('i');
+        piece.style.left = Math.random()*100 + 'vw';
+        piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+        piece.style.animationDelay = (Math.random()*0.2) + 's';
+        piece.style.transform = `translateY(-40px) rotate(${Math.random()*120}deg)`;
+        els.confetti.appendChild(piece);
+      }
+      setTimeout(() => els.confetti.innerHTML = '', 1600);
+    }
+
+    function latestMorning() {
+      return [...data.mornings].sort((a,b) => b.date.localeCompare(a.date))[0] || null;
+    }
+
+    function todayMorning() {
+      return data.mornings.find(x => x.date === dayKey()) || null;
+    }
+
+    function todayEvening() {
+      return data.evenings.find(x => x.date === dayKey()) || null;
+    }
+
+    function avg(arr) { return arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0; }
+
+    function getDailyStreak() {
+      const dates = [...new Set(data.evenings.map(x => x.date))].sort().reverse();
+      let streak = 0;
+      let cursor = new Date();
+      for (let i=0;i<dates.length;i++) {
+        const target = cursor.toISOString().slice(0,10);
+        if (dates[i] === target) {
+          streak++;
+          cursor.setDate(cursor.getDate()-1);
+        } else if (i === 0 && dates[i] !== target) {
+          const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+          if (dates[i] === yesterday.toISOString().slice(0,10)) {
+            cursor = yesterday; streak = 1; cursor.setDate(cursor.getDate()-1);
+          }
+        }
+      }
+      return streak;
+    }
+
+    function getHabitStreak(habitKey) {
+      const sorted = [...data.evenings].sort((a,b) => b.date.localeCompare(a.date));
+      let streak = 0;
+      let cursor = null;
+      for (const e of sorted) {
+        if (!cursor) cursor = e.date;
+        const expected = new Date(cursor + 'T12:00:00');
+        expected.setDate(expected.getDate() - streak);
+        const expectedKey = expected.toISOString().slice(0,10);
+        if (e.date !== expectedKey && streak > 0) break;
+        if (e.habits?.[habitKey]) streak++;
+        else if (e.date === expectedKey) break;
+      }
+      return streak;
+    }
+
+    function corr(xs, ys) {
+      if (xs.length !== ys.length || xs.length < 4) return null;
+      const mx = avg(xs), my = avg(ys);
+      let num = 0, dx = 0, dy = 0;
+      for (let i=0;i<xs.length;i++) {
+        const a = xs[i]-mx, b = ys[i]-my;
+        num += a*b; dx += a*a; dy += b*b;
+      }
+      if (!dx || !dy) return null;
+      return num / Math.sqrt(dx*dy);
+    }
+
+    function trend(values, n=5) {
+      if (values.length < n*2) return null;
+      const recent = avg(values.slice(-n));
+      const prev = avg(values.slice(-(n*2), -n));
+      return +(recent - prev).toFixed(2);
+    }
+
+    function keywordScan(texts) {
+      const patterns = [
+        { keys: ['meeting','call','anruf','termin','zoom'], label: 'Meetings ohne klare Intention ziehen Energie.' },
+        { keys: ['spät','sleep','schlaf','müde'], label: 'Schlaf und Tagesstart wirken direkt auf Energie und Produktivität.' },
+        { keys: ['social','instagram','handy','ablenk'], label: 'Ablenkung frisst Fokus. Digitalen Lärm härter kappen.' },
+        { keys: ['chaos','planlos','struktur'], label: 'Fehlende Struktur erzeugt Reibung. Plane härter am Vorabend.' },
+        { keys: ['essen','ernährung','snack'], label: 'Ernährung scheint ein unterschätzter Hebel für Stabilität zu sein.' }
+      ];
+      const joined = texts.join(' ').toLowerCase();
+      return patterns.filter(p => p.keys.some(k => joined.includes(k))).map(p => p.label);
+    }
+
+    function calcXP() {
+      let xp = 0;
+      data.mornings.forEach(() => xp += 15);
+      data.evenings.forEach(e => {
+        xp += 25;
+        if (e.nnDone === 'yes') xp += 20;
+        xp += ((e.sleep + e.movement + e.productivity + e.energy + e.wellbeing) / 5) * 2;
+        xp += (e.partnerProgress || 0) * 4 + (e.newContacts || 0) * 2;
+        xp += Object.values(e.habits || {}).filter(Boolean).length * 6;
+      });
+      return Math.round(xp);
+    }
+
+    function levelFromXP(xp) {
+      const level = Math.floor(xp / 120) + 1;
+      const progress = xp % 120;
+      return { level, progress, next: 120 };
+    }
+
+    function renderBars(target, items) {
+      target.innerHTML = items.map(item => `
+        <div class="bar-row">
+          <div class="bar-label">${item.label}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${item.value * 10}%"></div></div>
+          <div class="bar-value">${item.value.toFixed(1)}/10</div>
+        </div>
+      `).join('');
+    }
+
+    function updateDashboard() {
+      const m = latestMorning();
+      els.dashMainMove.textContent = m?.mainMove || '-';
+      els.dashNN.textContent = m?.nonNegotiable || '-';
+      els.dashPartner.textContent = m?.partnerProcess || '-';
+      els.dashRisk.textContent = m?.sabotageRisk || '-';
+      els.gratitudePills.innerHTML = (m?.gratitude || []).filter(Boolean).map(g => `<div class="pill">${g}</div>`).join('') || '<div class="pill">Dankbarkeit noch nicht eingetragen</div>';
+
+      const ev = data.evenings;
+      const metricItems = [
+        { label: 'Schlaf', value: avg(ev.map(x => x.sleep || 0)) },
+        { label: 'Bewegung', value: avg(ev.map(x => x.movement || 0)) },
+        { label: 'Produktivität', value: avg(ev.map(x => x.productivity || 0)) },
+        { label: 'Energie', value: avg(ev.map(x => x.energy || 0)) },
+        { label: 'Wohlbefinden', value: avg(ev.map(x => x.wellbeing || 0)) }
+      ];
+      renderBars(els.scoreBars, metricItems);
+
+      const habitItems = [
+        { label: 'Supplements', value: avg(ev.map(x => x.habits?.supplements ? 10 : 0)) / 1 },
+        { label: 'Meditation', value: avg(ev.map(x => x.habits?.meditation ? 10 : 0)) / 1 },
+        { label: 'Controlling', value: avg(ev.map(x => x.habits?.controlling ? 10 : 0)) / 1 }
+      ];
+      renderBars(els.habitBars, habitItems);
+
+      const xp = calcXP();
+      const levelObj = levelFromXP(xp);
+      els.xpLevel.textContent = levelObj.level;
+      els.xpText.textContent = `${xp} XP gesammelt`;
+      els.xpFill.style.width = `${(levelObj.progress / levelObj.next) * 100}%`;
+      els.dailyStreak.textContent = getDailyStreak();
+
+      const commitment = ev.length ? Math.round(ev.filter(x => x.nnDone === 'yes').length / ev.length * 100) : 0;
+      els.commitmentRate.textContent = commitment + '%';
+      const performance = metricItems.length ? avg(metricItems.map(x => x.value)) : 0;
+      els.perfScore.textContent = performance.toFixed(1);
+
+      const recos = generateRecommendations().slice(0,2);
+      els.topReco.innerHTML = recos.map(r => `<div class="analysis-item">${r}</div>`).join('') || '<div class="analysis-item">Sobald du ein paar Daten eingibst, bekommst du hier priorisierte Empfehlungen.</div>';
+
+      document.getElementById('streakSupplements').textContent = getHabitStreak('supplements') + ' Tage';
+      document.getElementById('streakMeditation').textContent = getHabitStreak('meditation') + ' Tage';
+      document.getElementById('streakControlling').textContent = getHabitStreak('controlling') + ' Tage';
+    }
+
+    function generateRecommendations() {
+      const ev = [...data.evenings].sort((a,b) => a.date.localeCompare(b.date));
+      if (!ev.length) return [];
+      const recos = [];
+      const commitment = ev.filter(x => x.nnDone === 'yes').length / ev.length;
+      if (commitment < 0.7) recos.push(`Deine Commitment-Rate liegt nur bei ${Math.round(commitment*100)}%. Dein Engpass ist nicht Erkenntnis, sondern Durchziehen. Setze dein Non-Negotiable kleiner, aber absolut verbindlich.`);
+
+      const cats = [
+        ['sleep','Schlaf'], ['movement','Bewegung'], ['productivity','Produktivität'], ['energy','Energie'], ['wellbeing','Wohlbefinden']
+      ];
+      const avgCats = cats.map(([k,label]) => ({ key:k, label, value: avg(ev.map(x => x[k] || 0)) })).sort((a,b) => a.value - b.value);
+      if (avgCats[0]) {
+        const low = avgCats[0];
+        const specific = {
+          sleep: 'Mach Schlaf härter planbar: feste Cut-off-Zeit, Handy raus, spätes Essen runter.',
+          movement: 'Bewegung ist zu schwach. Lege ein Minimum fest: 20 Minuten Walk oder Training vor dem Nachmittag.',
+          productivity: 'Produktivität fällt ab. Prüfe, ob du zu viele offene Loops und zu wenig Deep-Work-Blöcke hast.',
+          energy: 'Energie ist dein Limit. Verteile den Tag nach Leistungskurven statt nach Laune.',
+          wellbeing: 'Wohlbefinden ist zu niedrig. Das ist kein Soft-Faktor, sondern Frühwarnsystem.'
+        };
+        recos.push(`Dein schwächster Kernwert ist ${low.label} mit Ø ${low.value.toFixed(1)}/10. ${specific[low.key]}`);
+      }
+
+      const sleepProd = corr(ev.map(x => x.sleep), ev.map(x => x.productivity));
+      if (sleepProd !== null && sleepProd > 0.35) recos.push(`Schlaf korreliert spürbar mit Produktivität (${sleepProd.toFixed(2)}). Deine beste Leistungsoptimierung liegt aktuell eher im Vorabend als im Kalender.`);
+      const moveEnergy = corr(ev.map(x => x.movement), ev.map(x => x.energy));
+      if (moveEnergy !== null && moveEnergy > 0.3) recos.push(`Bewegung und Energie hängen bei dir zusammen (${moveEnergy.toFixed(2)}). Plane Bewegung nicht als Bonus, sondern als Performance-Trigger.`);
+
+      const prodTrend = trend(ev.map(x => x.productivity));
+      if (prodTrend !== null) {
+        if (prodTrend > 0.5) recos.push(`Deine Produktivität steigt in den letzten Tagen um ${prodTrend.toFixed(1)} Punkte. Halte die aktuelle Struktur fest, statt wieder unnötig umzubauen.`);
+        if (prodTrend < -0.5) recos.push(`Deine Produktivität kippt zuletzt um ${Math.abs(prodTrend).toFixed(1)} Punkte. Reduziere Kontextwechsel und prüfe, was zuletzt deinen Rhythmus zerstört hat.`);
+      }
+
+      const avgPartners = avg(ev.map(x => x.partnerProgress || 0));
+      const avgContacts = avg(ev.map(x => x.newContacts || 0));
+      if (avgPartners < 1) recos.push(`Partnerprozesse kommen zu langsam voran (Ø ${avgPartners.toFixed(1)} pro Tag). Definiere jeden Morgen genau eine Person plus nächsten Schritt.`);
+      if (avgContacts < 2) recos.push(`Zu wenige neue Kontakte (Ø ${avgContacts.toFixed(1)}). Ohne frische Kontakte trocknet die Pipeline aus. Plane täglich einen klaren Kontaktkanal.`);
+
+      const habitRates = {
+        supplements: ev.filter(x => x.habits?.supplements).length / ev.length,
+        meditation: ev.filter(x => x.habits?.meditation).length / ev.length,
+        controlling: ev.filter(x => x.habits?.controlling).length / ev.length,
+      };
+      const lowHabit = Object.entries(habitRates).sort((a,b) => a[1]-b[1])[0];
+      if (lowHabit && lowHabit[1] < 0.6) {
+        const names = { supplements: 'Supplements', meditation: 'Meditation', controlling: 'Controlling' };
+        recos.push(`${names[lowHabit[0]]} ist zu instabil (${Math.round(lowHabit[1]*100)}% Erfüllung). Ein Habit bringt nur Wirkung, wenn du es banal einfach machst und an einen festen Trigger hängst.`);
+      }
+
+      const drainers = keywordScan(ev.map(x => x.energyDrainer || ''));
+      drainers.slice(0,2).forEach(d => recos.push(d));
+
+      const learningTexts = ev.map(x => x.mainLearning).filter(Boolean).slice(-5);
+      if (learningTexts.length >= 3) recos.push(`Deine letzten Learnings zeigen: ${learningTexts.join(' | ')}. Nicht mehr nur erkennen – übersetze das in 1 feste Regel für nächste Woche.`);
+
+      return [...new Set(recos)].slice(0,8);
+    }
+
+    function renderAnalysis() {
+      const recos = generateRecommendations();
+      els.analysisList.innerHTML = recos.map(r => `<div class="analysis-item">${r}</div>`).join('') || '<div class="analysis-item">Noch zu wenig Daten. Fülle erst ein paar Tage sauber aus.</div>';
+
+      const ev = data.evenings;
+      const commitment = ev.length ? Math.round(ev.filter(x => x.nnDone === 'yes').length / ev.length * 100) : 0;
+      const stats = [
+        ['Ø Partnerprozesse/Tag', avg(ev.map(x => x.partnerProgress || 0)).toFixed(1)],
+        ['Ø neue Kontakte/Tag', avg(ev.map(x => x.newContacts || 0)).toFixed(1)],
+        ['Commitment erfüllt', commitment + '%'],
+        ['Top Habit-Streak', Math.max(getHabitStreak('supplements'), getHabitStreak('meditation'), getHabitStreak('controlling')) + ' Tage'],
+        ['Abend-Check-ins', String(ev.length)],
+        ['Morgen-Check-ins', String(data.mornings.length)]
+      ];
+      els.salesStats.innerHTML = stats.map(([k,v]) => `<div class="mini"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
+    }
+
+    function renderHistory() {
+      const combined = [];
+      data.mornings.forEach(m => combined.push({ kind:'Morgen', date:m.date, payload:m }));
+      data.evenings.forEach(e => combined.push({ kind:'Abend', date:e.date, payload:e }));
+      combined.sort((a,b) => (b.date + b.kind).localeCompare(a.date + a.kind));
+
+      els.historyList.innerHTML = combined.map(item => {
+        if (item.kind === 'Morgen') {
+          const m = item.payload;
+          return `
+            <div class="entry">
+              <div class="entry-top"><div class="entry-date">${fmtDate(item.date)}</div><div class="entry-kind">Morgen</div></div>
+              <div class="mini-grid">
+                <div class="mini"><div class="k">Haupt-Move</div><div class="v">${m.mainMove || '-'}</div></div>
+                <div class="mini"><div class="k">Non-Negotiable</div><div class="v">${m.nonNegotiable || '-'}</div></div>
+                <div class="mini"><div class="k">Partnerprozess</div><div class="v">${m.partnerProcess || '-'}</div></div>
+                <div class="mini"><div class="k">Start-Energie</div><div class="v">${m.startEnergy || '-'}/10</div></div>
+              </div>
+            </div>`;
+        }
+        const e = item.payload;
+        return `
+          <div class="entry">
+            <div class="entry-top"><div class="entry-date">${fmtDate(item.date)}</div><div class="entry-kind">Abend</div></div>
+            <div class="mini-grid">
+              <div class="mini"><div class="k">Commitment</div><div class="v">${e.nnDone === 'yes' ? 'Ja' : 'Nein'}</div></div>
+              <div class="mini"><div class="k">Partnerprozesse</div><div class="v">${e.partnerProgress || 0}</div></div>
+              <div class="mini"><div class="k">Neue Kontakte</div><div class="v">${e.newContacts || 0}</div></div>
+              <div class="mini"><div class="k">Performance</div><div class="v">${avg([e.sleep,e.movement,e.productivity,e.energy,e.wellbeing]).toFixed(1)}/10</div></div>
+              <div class="mini"><div class="k">Best Move</div><div class="v">${e.bestMove || '-'}</div></div>
+              <div class="mini"><div class="k">Energiefresser</div><div class="v">${e.energyDrainer || '-'}</div></div>
+            </div>
+          </div>`;
+      }).join('') || '<div class="entry">Noch keine Einträge vorhanden.</div>';
+    }
+
+    function refreshAll() {
+      updateDashboard();
+      renderAnalysis();
+      renderHistory();
+    }
+
+    function upsert(arr, record) {
+      const idx = arr.findIndex(x => x.date === record.date);
+      if (idx >= 0) arr[idx] = record; else arr.push(record);
+    }
+
+    document.getElementById('saveMorning').addEventListener('click', () => {
+      const record = {
+        date: dayKey(),
+        mainMove: document.getElementById('mainMove').value.trim(),
+        nonNegotiable: document.getElementById('nonNegotiable').value.trim(),
+        partnerProcess: document.getElementById('partnerProcess').value.trim(),
+        startEnergy: Number(document.getElementById('startEnergy').value),
+        sabotageRisk: document.getElementById('sabotageRisk').value.trim(),
+        gratitude: [document.getElementById('gratitude1').value.trim(), document.getElementById('gratitude2').value.trim(), document.getElementById('gratitude3').value.trim()].filter(Boolean)
+      };
+      if (!record.mainMove || !record.nonNegotiable) { showToast('Haupt-Move und Non-Negotiable ausfüllen.'); return; }
+      upsert(data.mornings, record); saveData(data); refreshAll(); blastConfetti(18); showToast('Morgen-Check-in gespeichert.');
+    });
+
+    document.getElementById('loadToday').addEventListener('click', () => {
+      const m = todayMorning() || latestMorning();
+      if (!m) { showToast('Noch kein Morgen-Check-in da.'); return; }
+      document.getElementById('mainMove').value = m.mainMove || '';
+      document.getElementById('nonNegotiable').value = m.nonNegotiable || '';
+      document.getElementById('partnerProcess').value = m.partnerProcess || '';
+      document.getElementById('startEnergy').value = m.startEnergy || 7;
+      document.getElementById('sabotageRisk').value = m.sabotageRisk || '';
+      document.getElementById('gratitude1').value = m.gratitude?.[0] || '';
+      document.getElementById('gratitude2').value = m.gratitude?.[1] || '';
+      document.getElementById('gratitude3').value = m.gratitude?.[2] || '';
+      rangePairs.forEach(([inputId, valId]) => { const input = document.getElementById(inputId); const val = document.getElementById(valId); if (input && val) val.textContent = input.value; });
+      showToast('Daten geladen.');
+    });
+
+    document.getElementById('saveEvening').addEventListener('click', () => {
+      const record = {
+        date: dayKey(),
+        nnDone: document.getElementById('nnDone').value,
+        mainLearning: document.getElementById('mainLearning').value.trim(),
+        sleep: Number(document.getElementById('sleep').value),
+        movement: Number(document.getElementById('movement').value),
+        productivity: Number(document.getElementById('productivity').value),
+        energy: Number(document.getElementById('energy').value),
+        wellbeing: Number(document.getElementById('wellbeing').value),
+        partnerProgress: Number(document.getElementById('partnerProgress').value || 0),
+        newContacts: Number(document.getElementById('newContacts').value || 0),
+        bestMove: document.getElementById('bestMove').value.trim(),
+        energyDrainer: document.getElementById('energyDrainer').value.trim(),
+        habits: {
+          supplements: document.getElementById('habitSupplements').checked,
+          meditation: document.getElementById('habitMeditation').checked,
+          controlling: document.getElementById('habitControlling').checked,
+        }
+      };
+      upsert(data.evenings, record); saveData(data); refreshAll(); blastConfetti(32); showToast('Abend-Check-in gespeichert.');
+    });
+
+    document.getElementById('exportData').addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `routine-os-export-${dayKey()}.json`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      showToast('Daten exportiert.');
+    });
+
+    document.getElementById('importData').addEventListener('click', () => document.getElementById('importFile').click());
+    document.getElementById('importFile').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const imported = JSON.parse(reader.result);
+          if (!imported.mornings || !imported.evenings) throw new Error('invalid');
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(imported));
+          location.reload();
+        } catch {
+          showToast('Import fehlgeschlagen.');
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    document.getElementById('clearData').addEventListener('click', () => {
+      const ok = confirm('Wirklich alle Daten löschen?');
+      if (!ok) return;
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
+    });
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+    }
+
+    refreshAll();
+  </script>
+</body>
+</html>
